@@ -1,5 +1,6 @@
 package it.aitho.oriontt.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class MatchSet {
 
     @ManyToOne
     @JoinColumn(name = "match_id")
+    @JsonIgnore
     private Match match;
 
     // numero del set dentro la partita: 1, 2, 3...

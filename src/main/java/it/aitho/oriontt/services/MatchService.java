@@ -33,8 +33,9 @@ public class MatchService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid match id");
         }
 
-        // findById restituisce un Optional: se è vuoto (partita inesistente) → 404 Not Found
-        return matchRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Match not found"));
+        // orElseThrow: se l'Optional è vuoto, lancia il 404
+        Match match = matchRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Match not found"));
+        return match;
+
     }
 }

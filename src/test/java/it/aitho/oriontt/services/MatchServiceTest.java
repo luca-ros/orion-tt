@@ -30,11 +30,11 @@ class MatchServiceTest {
     @Test
     void getMatchById_idZero_throwsBadRequest() {
         // assertThrows: verifica che il method lanci proprio questa exception
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+        ResponseStatusException serviceResponse = assertThrows(ResponseStatusException.class,
                 () -> matchService.getMatchById(0L));
 
         // Controlla che lo status dentro l'exception sia 400
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, serviceResponse.getStatusCode());
     }
 
     // Caso: partita inesistente → il Service deve lanciare un 404 Not Found

@@ -3,6 +3,8 @@ package it.aitho.oriontt.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "matches") // la tabella sta nel database orion_tt su MySQL
 public class Match {
@@ -21,6 +23,9 @@ public class Match {
     @ManyToOne
     @JoinColumn (name = "player_2_id")
     private Player player2;
+
+    @OneToMany(mappedBy = "match")
+    private List<MatchSet> matchSets;
 
     // vincitore: resta NULL finché la partita non è FINISHED
     @ManyToOne
@@ -74,5 +79,15 @@ public class Match {
 
     public void setStatus(MatchStatus status) {
         this.status = status;
+    }
+
+    // getter: restituisce tutti i set della partita
+    public List<MatchSet> getMatchSets() {
+        return matchSets;
+    }
+
+    // setter: imposta la lista dei set
+    public void setMatchSets(List<MatchSet> matchSets) {
+        this.matchSets = matchSets;
     }
 }

@@ -1,7 +1,6 @@
 package it.aitho.oriontt.controllers;
 
 import it.aitho.oriontt.entities.Match;
-import it.aitho.oriontt.repositories.MatchRepository;
 import it.aitho.oriontt.services.MatchService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
