@@ -1,5 +1,6 @@
 package it.aitho.oriontt.controllers;
 
+import it.aitho.oriontt.dto.PlayerDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.services.PlayerService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +44,7 @@ public class PlayerController {
     @GetMapping
     // vuota: non aggiunge niente al percorso → l'URL resta /api/players
     // (con "/players" diventerebbe /api/players/players)
-    public List<Player> getAllPlayers() {
+    public List<PlayerDTO> getAllPlayers() {
         // List<Player> = tipo di ritorno: una lista di oggetti Player (tutti i giocatori)
         // parentesi vuote: l'URL non porta nessun valore da leggere (niente id)
         return playerService.getAllPlayers();
