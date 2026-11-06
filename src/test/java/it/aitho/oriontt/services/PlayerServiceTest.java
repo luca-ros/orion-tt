@@ -64,5 +64,32 @@ public class PlayerServiceTest {
 
     }
 
+    @Test
+        // preparo i dati finti:
+    void createPlayer() {
+        // giocatore come arriva da Postman: senza id
+        Player player = new Player();
+        player.setFirstName("Chissu");
+        player.setLastName("Essere");
+
+        // giocatore dopo il salvataggio nel DB Ha un ID che deve tornare al Service
+        Player savedPlayer = new Player();
+        savedPlayer.setId(8L);
+        savedPlayer.setFirstName("Chissu");
+        savedPlayer.setLastName("Essere");
+
+        // dico al Repository finto cosa restituire al Service
+        when(playerRepository.save(player)).thenReturn(savedPlayer);
+
+        //  chiamo il Service vero
+        Player result = playerService.createPlayer(player);
+
+        //  controllo che il Service restituisca il giocatore salvato, con id, first name e last name
+        assertEquals(8L, result.getId());
+        assertEquals("Chissu", result.getFirstName());
+        assertEquals("Essere", result.getLastName());
+
+    }
+
 
 }
