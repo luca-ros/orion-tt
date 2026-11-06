@@ -3,9 +3,7 @@ package it.aitho.oriontt.controllers;
 import it.aitho.oriontt.dto.PlayerDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.services.PlayerService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 // List: viene da Java (java.util), non da Spring
@@ -50,5 +48,11 @@ public class PlayerController {
         return playerService.getAllPlayers();
         // chiamo il method del Service: Controller → Service → Repository
         // () obbligatorie: senza parentesi Java cerca un campo, non un method
+    }
+
+    // POST new Player  /api/players
+    @PostMapping
+    public Player createPlayer(@RequestBody Player player){
+        return playerService.createPlayer(player);
     }
 }
