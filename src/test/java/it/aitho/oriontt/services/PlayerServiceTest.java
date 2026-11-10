@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -89,6 +90,23 @@ public class PlayerServiceTest {
         assertEquals("Chissu", result.getFirstName());
         assertEquals("Essere", result.getLastName());
 
+    }
+
+    @Test
+    void updateEmailPlayer() {
+        // giocatore finto: nel test il DB non c'è, lo prepariamo a mano
+        Player playerUpdateEmail = new Player();
+        playerUpdateEmail.setFirstName("Long");   // serve al Service per creare il PlayerDTO
+        playerUpdateEmail.setLastName("Ma");  // idem
+
+        // quando il Service cerca l'id 1L, il repository finto restituisce il giocatore dentro un Optional
+        when(playerRepository.findById(1L)).thenReturn(Optional.of(playerUpdateEmail));
+
+        // chiamo il Service vero con un'email "sporca"
+        PlayerDTO result = playerService.updateEmailPlayer(1L, "  ma.Long@gmail.it");
+
+        // verifico che l'email sia stata sanificata
+        assertEquals("ma.long@gmail.it", result.getEmail());
     }
 
 
