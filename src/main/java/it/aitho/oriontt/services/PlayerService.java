@@ -41,7 +41,7 @@ public class PlayerService {
             // 3. for-each: "per ogni player nella lista players"
             // (in JS: for (const player of players))
 
-            result.add(new PlayerDTO(player.getFirstName(), player.getLastName()));
+            result.add(new PlayerDTO(player.getFirstName(), player.getLastName(), player.getEmail()));
             // 4. trasformo il Player in PlayerDTO e lo aggiungo a result
             // new PlayerDTO(nome, cognome) → stesso ordine del costruttore di PlayerDTO
             // getFirstName() / getLastName() → i getter di Player

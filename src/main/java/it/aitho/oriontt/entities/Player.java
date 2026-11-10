@@ -18,9 +18,20 @@ public class Player {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "email")
+    private String email;
+
     // costruttore vuoto: serve a JPA/Hibernate per creare l'oggetto Player
     // quando legge una riga dalla tabella players
     public Player() {
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getId() {
