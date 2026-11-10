@@ -1,5 +1,6 @@
 package it.aitho.oriontt.controllers;
 
+import it.aitho.oriontt.dto.EmailUpdateDTO;
 import it.aitho.oriontt.dto.PlayerDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.services.PlayerService;
@@ -54,5 +55,12 @@ public class PlayerController {
     @PostMapping
     public Player createPlayer(@RequestBody Player player){
         return playerService.createPlayer(player);
+    }
+
+    // PATCH update email
+    @PatchMapping("/{id}")
+    public PlayerDTO updateEmailPlayer(@PathVariable Long id, @RequestBody EmailUpdateDTO request) {
+        //restituisci quello che ti dà il Service
+        return playerService.updateEmailPlayer(id, request.getEmail());
     }
 }
