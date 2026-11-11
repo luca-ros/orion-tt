@@ -71,17 +71,11 @@ public class PlayerService {
     // lo cerca nel DB (404 se non esiste), sanifica l'email (trim + toLowerCase),
     // la salva e restituisce il PlayerDTO aggiornato al Controller
     public PlayerDTO updateEmailPlayer(Long id, String email) { // ← firma
-        // id 0 o negativo: input sbagliato a priori → 400 Bad Request
-        if (id <= 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid player id");
-        }
 
         // orElseThrow: se l'Optional è vuoto, lancia il 404
         Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
-        // sanificazione: tolgo gli spazi e metto tutto minuscolo.
-        String cleanEmail = email.trim().toLowerCase();
-        // setter: scrive cleanEmail dentro il campo email di questo player
-        player.setEmail(cleanEmail);
+        // sanificazione: metto tutto minuscolo.
+        player.setEmail(email.toLowerCase());
         // salvo il player aggiornato nel DB (ha già un id, quindi save fa un UPDATE)
         playerRepository.save(player);
         // trasformo l'Entity in DTO e la restituisco al Controller

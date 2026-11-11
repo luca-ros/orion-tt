@@ -4,6 +4,7 @@ import it.aitho.oriontt.dto.EmailUpdateDTO;
 import it.aitho.oriontt.dto.PlayerDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.services.PlayerService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,7 +60,7 @@ public class PlayerController {
 
     // PATCH update email
     @PatchMapping("/{id}")
-    public PlayerDTO updateEmailPlayer(@PathVariable Long id, @RequestBody EmailUpdateDTO request) {
+    public PlayerDTO updateEmailPlayer(@PathVariable Long id, @Valid @RequestBody EmailUpdateDTO request) {
         //restituisci quello che ti dà il Service
         return playerService.updateEmailPlayer(id, request.getEmail());
     }

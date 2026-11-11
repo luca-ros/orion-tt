@@ -32,16 +32,8 @@ public class PlayerServiceTest {
     @Test
 // @Test: questo method è un test, JUnit lo esegue
     void getAllPlayers() {
-
-        // 1. preparo i dati finti: un Player come se arrivasse dal database
-        Player player = new Player();
-        // costruttore vuoto di Player (quello che usa JPA)
-        player.setFirstName("Long");
-        player.setLastName("Ma");
-        // setter: mettono i valori nei campi del Player
-
         // 2. dico al Repository finto cosa restituire
-        when(playerRepository.findAll()).thenReturn(List.of(player));
+        when(playerRepository.findAll()).thenReturn(List.of(getPlayerMock()));
         // "quando il Service chiama findAll(), restituisci una lista con questo Player"
         // il Repository restituisce Player (non DTO): la trasformazione la fa il Service
 
@@ -94,19 +86,21 @@ public class PlayerServiceTest {
 
     @Test
     void updateEmailPlayer() {
-        // giocatore finto: nel test il DB non c'è, lo prepariamo a mano
-        Player playerUpdateEmail = new Player();
-        playerUpdateEmail.setFirstName("Long");   // serve al Service per creare il PlayerDTO
-        playerUpdateEmail.setLastName("Ma");  // idem
-
         // quando il Service cerca l'id 1L, il repository finto restituisce il giocatore dentro un Optional
-        when(playerRepository.findById(1L)).thenReturn(Optional.of(playerUpdateEmail));
+        when(playerRepository.findById(1L)).thenReturn(Optional.of(getPlayerMock()));
 
         // chiamo il Service vero con un'email "sporca"
-        PlayerDTO result = playerService.updateEmailPlayer(1L, "  ma.Long@gmail.it");
+        PlayerDTO result = playerService.updateEmailPlayer(1L, "ma.Long@gmail.it");
 
         // verifico che l'email sia stata sanificata
         assertEquals("ma.long@gmail.it", result.getEmail());
+    }
+
+    private Player getPlayerMock() {
+        Player player = new Player();
+        player.setFirstName("Long");
+        player.setLastName("Ma");
+        return player;
     }
 
 
