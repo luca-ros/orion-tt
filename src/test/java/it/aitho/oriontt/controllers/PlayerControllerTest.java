@@ -15,8 +15,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,12 +35,10 @@ public class PlayerControllerTest {
     void getAllPlayers() throws Exception {
 
         // 1. il Service finto restituisce una lista con un DTO
-        when(playerService.getAllPlayers())
-                .thenReturn(List.of(new PlayerDTO("Long", "Ma","aitho@test1.it")));
+        when(playerService.getAllPlayers()).thenReturn(List.of(new PlayerDTO("Long", "Ma", "aitho@test1.it")));
 
         // 2. simulo la GET, come Send in Postman
-        mockMvc.perform(get("/api/players"))
-                .andExpect(status().isOk())                          // codice 200
+        mockMvc.perform(get("/api/players")).andExpect(status().isOk())                          // codice 200
                 .andExpect(jsonPath("$[0].firstName").value("Long")) // nome del primo giocatore
                 .andExpect(jsonPath("$[0].lastName").value("Ma"))   // cognome
                 .andExpect(jsonPath("$[0].email").value("aitho@test1.it"));
@@ -50,8 +47,7 @@ public class PlayerControllerTest {
     @Test
     void getAllPlayersEmptyList() throws Exception {
         when(playerService.getAllPlayers()).thenReturn(List.of());
-        mockMvc.perform(get("/api/players"))
-                .andExpect(status().isOk())          // 200
+        mockMvc.perform(get("/api/players")).andExpect(status().isOk())          // 200
                 .andExpect(jsonPath("$").isEmpty()); // $ = tutto il JSON: deve essere []
     }
 
@@ -70,14 +66,37 @@ public class PlayerControllerTest {
         savedPlayer.setEmail("aitho@test1.it");
         when(playerService.createPlayer(any(Player.class))).thenReturn(savedPlayer);
 
-        mockMvc.perform(post("/api/players")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"firstName\": \"Chissu\", \"lastName\": \"Essere\", \"email\": \"aitho@test1.it\"}"))
-                .andExpect(status().isOk())                          // oggi il POST risponde 200 (non ancora 201)
+        mockMvc.perform(post("/api/players").contentType(MediaType.APPLICATION_JSON).content("{\"firstName\": \"Chissu\", \"lastName\": \"Essere\", \"email\": \"aitho@test1.it\"}")).andExpect(status().isOk())                          // oggi il POST risponde 200 (non ancora 201)
                 .andExpect(jsonPath("$.id").value(8))                // id del giocatore salvato
                 .andExpect(jsonPath("$.firstName").value("Chissu"))  // nome
                 .andExpect(jsonPath("$.lastName").value("Essere"))  // cognome  // cognome
                 .andExpect(jsonPath("$.email").value("aitho@test1.it"));  // email
 
     }
+
+    // #2
+     @Test
+     void updateEmail() throws Exception {
+         when(playerService.updateEmailPlayer(6L, "aitho@test1.it")).thenReturn(getPlayerDTOMock());
+
+         // #3
+         mockMvc.perform(patch("/api/players/6").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"aitho@test1.it\"}")).andExpect(status().isOk())
+                 .andExpect(jsonPath("$.email").value("aitho@test1.it"));
+     }
+    // #1
+    // helper method: crea un PlayerDTO finto con dati pronti,
+    // riusato nei test del Controller al posto di ricrearlo ogni volta.
+    private PlayerDTO getPlayerDTOMock() {
+        // il PlayerDTO non ha setter: i dati passano dal costruttore
+        // (ordine: firstName, lastName, email)
+        return new PlayerDTO("Chissu", "Essere", "aitho@test1.it");
+    }
+
+    @Test
+    void updateNotValid() throws Exception {
+
+        mockMvc.perform(patch("/api/players/6").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"ciao\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
 }
