@@ -47,6 +47,10 @@ public class MatchService {
     }
 
     public Long createMatch(CreateMatchRequestDTO request) {
+        if (request.getPlayer1Id().equals(request.getPlayer2Id())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Players must be different");
+
+        }
         Player player1 = playerRepository.findById(request.getPlayer1Id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
         Player player2 = playerRepository.findById(request.getPlayer2Id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
 
