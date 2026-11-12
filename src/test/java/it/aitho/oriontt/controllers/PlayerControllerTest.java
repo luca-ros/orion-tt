@@ -75,14 +75,19 @@ public class PlayerControllerTest {
     }
 
     // #2
-     @Test
-     void updateEmail() throws Exception {
-         when(playerService.updateEmailPlayer(6L, "aitho@test1.it")).thenReturn(getPlayerDTOMock());
+    // Test PATCH email valida:
+    // mando un'email corretta al giocatore 6 → mi aspetto 200 OK
+    // e che nella risposta (PlayerDTO) torni la stessa email.
+    // Il Service è finto: il when gli dice cosa restituire.
+    @Test
+    void updateEmail() throws Exception {
+        when(playerService.updateEmailPlayer(6L, "aitho@test1.it")).thenReturn(getPlayerDTOMock());
 
-         // #3
-         mockMvc.perform(patch("/api/players/6").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"aitho@test1.it\"}")).andExpect(status().isOk())
-                 .andExpect(jsonPath("$.email").value("aitho@test1.it"));
-     }
+        // #3
+        mockMvc.perform(patch("/api/players/6").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"aitho@test1.it\"}")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("aitho@test1.it"));
+    }
+
     // #1
     // helper method: crea un PlayerDTO finto con dati pronti,
     // riusato nei test del Controller al posto di ricrearlo ogni volta.
@@ -92,6 +97,10 @@ public class PlayerControllerTest {
         return new PlayerDTO("Chissu", "Essere", "aitho@test1.it");
     }
 
+    // Test PATCH email non valida:
+    // mando "ciao" come email → mi aspetto 400 Bad Request.
+    // Niente when: @Valid blocca la richiesta prima del Service,
+    // che quindi non viene mai chiamato.
     @Test
     void updateNotValid() throws Exception {
 
