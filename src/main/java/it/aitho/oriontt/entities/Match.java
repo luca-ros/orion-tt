@@ -3,6 +3,7 @@ package it.aitho.oriontt.entities;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,12 +17,12 @@ public class Match {
 
     // la colonna player_1_id contiene l'id della tabella players
     @ManyToOne
-    @JoinColumn (name = "player_1_id")
+    @JoinColumn(name = "player_1_id")
     private Player player1;
 
 
     @ManyToOne
-    @JoinColumn (name = "player_2_id")
+    @JoinColumn(name = "player_2_id")
     private Player player2;
 
     @OneToMany(mappedBy = "match")
@@ -36,10 +37,23 @@ public class Match {
     @Column(name = "status")
     private MatchStatus status;
 
+    @Column(name = "planned_date")
+    private Date plannedDate;
+
     // costruttore vuoto: serve a JPA/Hibernate per creare l'oggetto Match
     // quando legge una riga dalla tabella matches
     public Match() {
     }
+
+
+    public Date getPlannedDate() {
+        return plannedDate;
+    }
+
+    public void setPlannedDate(Date plannedDate) {
+        this.plannedDate = plannedDate;
+    }
+
 
     public Long getId() {
         return id;
