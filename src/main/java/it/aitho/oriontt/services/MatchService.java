@@ -2,15 +2,16 @@ package it.aitho.oriontt.services;
 
 import it.aitho.oriontt.dto.CreateMatchRequestDTO;
 import it.aitho.oriontt.entities.Match;
+import it.aitho.oriontt.entities.MatchSet;
 import it.aitho.oriontt.entities.MatchStatus;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.repositories.MatchRepository;
+import it.aitho.oriontt.repositories.MatchSetRepository;
 import it.aitho.oriontt.repositories.PlayerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import static it.aitho.oriontt.entities.MatchStatus.SCHEDULED;
 
 @Service
 public class MatchService {
@@ -18,12 +19,14 @@ public class MatchService {
     // Repository che legge la tabella matches
     private final MatchRepository matchRepository;
     private final PlayerRepository playerRepository;
+    private final MatchSetRepository matchSetRepository;
 
     // Costruttore: Spring passa qui il MatchRepository che ha già creato (constructor injection)
-    public MatchService(MatchRepository matchRepository, PlayerRepository playerRepository) {
+    public MatchService(MatchRepository matchRepository, PlayerRepository playerRepository, MatchSetRepository matchSetRepository) {
         // Salva il repository nel campo final, così i method del Service possono usarlo
         this.matchRepository = matchRepository;
         this.playerRepository = playerRepository;
+        this.matchSetRepository = matchSetRepository;
     }
 
     // Cerca una partita per id.
@@ -47,7 +50,7 @@ public class MatchService {
     }
 
     public Long createMatch(CreateMatchRequestDTO request) {
-        if (request.getPlayer1Id().equals(request.getPlayer2Id())){
+        if (request.getPlayer1Id().equals(request.getPlayer2Id())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Players must be different");
 
         }
@@ -65,4 +68,31 @@ public class MatchService {
     }
 
 
+    // AVVIO PARTITA: crea il primo set vuoto e mette la partita IN_PROGRESS
+    // @Transactional: INSERT del set + UPDATE del match valgono come un'unica operazione
+    // (se una fallisce, il database torna com'era)
+    @Transactional
+    public Match startMatch(Long id) {
+
+        // blocco 1: 400 se id <= 0, 404 se non esiste → lo fa già getMatchById
+        Match match = getMatchById(id);
+
+        // blocco 2: 409 se la partita è IN_PROGRESS o FINISHED
+        if (match.getStatus() != MatchStatus.SCHEDULED) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Match already started or finished");
+        }
+
+        // blocco 3: INSERT del primo set vuoto (0-0) collegato a questa partita
+        MatchSet firstSet = new MatchSet();
+        firstSet.setMatch(match);
+        firstSet.setSetNumber(1);
+        firstSet.setPlayer1Points(0);
+        firstSet.setPlayer2Points(0);
+        matchSetRepository.save(firstSet);
+
+        // blocco 4: UPDATE dello status → IN_PROGRESS
+        match.setStatus(MatchStatus.IN_PROGRESS);
+        // save con l'id già presente = UPDATE (non crea una nuova riga)
+        return matchRepository.save(match);
+    }
 }

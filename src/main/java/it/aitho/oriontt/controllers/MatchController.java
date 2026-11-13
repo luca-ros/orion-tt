@@ -23,9 +23,18 @@ public class MatchController {
        // il Service controlla l’id: 400 se ≤ 0, 404 se la partita non esiste
         return matchService.getMatchById(id);
     }
-
+    // POST NEW MATCH STATUS: SCHEDULED
     @PostMapping
-    public Long createMatch(@RequestBody CreateMatchRequestDTO request){
+    public Long createMatch(@RequestBody CreateMatchRequestDTO request) {
         return matchService.createMatch(request);
     }
+
+    // POST NEW MATCH
+    // AVVIO PARTITA: la partita esiste già, la mette IN_PROGRESS e crea il primo set vuoto
+    @PostMapping("/{id}/start")
+    public Match startMatch(@PathVariable Long id) {
+        return matchService.startMatch(id);
+    }
+
+
 }
