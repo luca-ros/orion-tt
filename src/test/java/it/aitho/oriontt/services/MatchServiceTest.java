@@ -99,4 +99,22 @@ class MatchServiceTest {
         assertEquals(MatchStatus.IN_PROGRESS, result.getStatus());
     }
 
+    // Caso: partita già IN_PROGRESS → il Service deve lanciare un 409 Conflict
+    @Test
+    void startMatch_inProgress_throwsConflict() {
+        // Arrange: partita finta, ma già iniziata
+        Match match = getMatchMock();
+        match.setStatus(MatchStatus.IN_PROGRESS);
+        // il Repository finto la restituisce quando cercano l'id 1
+        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+        // niente when del save: il Service si ferma prima, al controllo dello status
+
+        // Act + Assert: startMatch deve LANCIARE l'exception
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> matchService.startMatch(1L));
+
+        // Assert: lo status dentro l'exception deve essere 409
+        assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
+    }
+
 }
