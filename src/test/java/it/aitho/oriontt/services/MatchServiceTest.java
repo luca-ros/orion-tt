@@ -1,7 +1,9 @@
 package it.aitho.oriontt.services;
 
 import it.aitho.oriontt.entities.Match;
+import it.aitho.oriontt.entities.MatchStatus;
 import it.aitho.oriontt.repositories.MatchRepository;
+import it.aitho.oriontt.repositories.MatchSetRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +23,8 @@ class MatchServiceTest {
     // Repository finto: non tocca il database, decidiamo noi cosa restituisce
     @Mock
     private MatchRepository matchRepository;
+    @Mock
+    private MatchSetRepository matchSetRepository;
 
     // Il Service vero, a cui Mockito passa il repository finto
     @InjectMocks
@@ -65,6 +69,34 @@ class MatchServiceTest {
 
         // Controlla che sia proprio la partita con id 1
         assertEquals(1L, result.getId());
+    }
+
+    // Helper: partita finta con id 1 in stato SCHEDULED
+    private Match getMatchMock() {
+        // crea un nuovo oggetto Match, ancora vuoto
+        Match match = new Match();
+        // setter: imposta l'id della partita a 1
+        match.setId(1L);
+        // setter: la partita parte SCHEDULED, cioè non ancora iniziata
+        match.setStatus(MatchStatus.SCHEDULED);
+        // restituisce la partita pronta a chi chiama getMatchMock()
+        return match;
+    }
+
+    @Test
+    void startMatch_scheduled_returnsInProgress() {
+
+        // Arrange
+        Match match = getMatchMock();
+        when(matchRepository.findById(1L)).thenReturn(Optional.of(match));
+        when(matchRepository.save(match)).thenReturn(match);
+
+        // ACT
+        // Chiamiamo il Service vero
+        Match result = matchService.startMatch(1L);
+
+        // Assert: mi aspetto IN_PROGRESS, controllo lo status reale del risultato
+        assertEquals(MatchStatus.IN_PROGRESS, result.getStatus());
     }
 
 }
