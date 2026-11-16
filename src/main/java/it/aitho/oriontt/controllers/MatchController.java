@@ -29,7 +29,7 @@ public class MatchController {
         return matchService.createMatch(request);
     }
 
-    // POST NEW MATCH
+    // POST NEW MATCH STATUS: IN_PROGRESS
     // AVVIO PARTITA: la partita esiste già, la mette IN_PROGRESS e crea il primo set vuoto
     @PostMapping("/{id}/start")
     public Match startMatch(@PathVariable Long id) {
