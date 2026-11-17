@@ -172,7 +172,8 @@ public class MatchService {
             nextSet.setSetNumber(setNumber + 1);
             nextSet.setPlayer1Points(0);
             nextSet.setPlayer2Points(0);
-            matchSetRepository.save(nextSet);   // nessun id → INSERT
+            matchSetRepository.save(nextSet);  // INSERT nel DB
+            match.getMatchSets().add(nextSet); // ← aggiunge il set anche alla lista in memoria → compare nel JSON
         }
 
         // salvo il match e lo restituisco al Controller
