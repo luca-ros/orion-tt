@@ -6,6 +6,9 @@ import it.aitho.oriontt.entities.Match;
 import it.aitho.oriontt.services.MatchService;
 import org.springframework.web.bind.annotation.*;
 
+// Autorizza le chiamate dal frontend React in sviluppo (Vite gira su localhost:5173)
+// Senza questa riga il browser blocca le richieste: porte diverse = "origini" diverse
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/matches")   // tutti gli indirizzi di questa classe iniziano così
 public class MatchController {
