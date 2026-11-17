@@ -1,6 +1,7 @@
 package it.aitho.oriontt.controllers;
 
 import it.aitho.oriontt.dto.CreateMatchRequestDTO;
+import it.aitho.oriontt.dto.UpdateSetRequestDTO;
 import it.aitho.oriontt.entities.Match;
 import it.aitho.oriontt.services.MatchService;
 import org.springframework.web.bind.annotation.*;
@@ -36,5 +37,14 @@ public class MatchController {
         return matchService.startMatch(id);
     }
 
-
+    // PATCH /api/matches/6/sets/1  con Body { "player1Points": 11, "player2Points": 7 }
+    @PatchMapping("/{id}/sets/{setNumber}")
+    public Match updateSet(
+            @PathVariable Long id,
+            @PathVariable Integer setNumber,
+            @RequestBody UpdateSetRequestDTO request
+    ) {
+        // Passa tutto al Service
+        return matchService.updateSet(id, setNumber, request);
+    }
 }
