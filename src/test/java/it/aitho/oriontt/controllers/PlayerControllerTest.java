@@ -34,21 +34,22 @@ public class PlayerControllerTest {
     @Test
     void getAllPlayers() throws Exception {
 
-        // 1. il Service finto restituisce una lista con un DTO
-        when(playerService.getAllPlayers()).thenReturn(List.of(new PlayerDTO("Long", "Ma", "aitho@test1.it")));
+        // 1. il Service finto restituisce una lista con un DTO (id, nome, cognome, email)
+        when(playerService.getAllPlayers()).thenReturn(List.of(new PlayerDTO(1L, "Long", "Ma", "aitho@test1.it")));
 
         // 2. simulo la GET, come Send in Postman
-        mockMvc.perform(get("/api/players")).andExpect(status().isOk())                          // codice 200
-                .andExpect(jsonPath("$[0].firstName").value("Long")) // nome del primo giocatore
-                .andExpect(jsonPath("$[0].lastName").value("Ma"))   // cognome
-                .andExpect(jsonPath("$[0].email").value("aitho@test1.it"));
+        mockMvc.perform(get("/api/players")).andExpect(status().isOk())   // codice 200
+                .andExpect(jsonPath("$[0].id").value(1))                  // ← id (ora presente nel JSON)
+                .andExpect(jsonPath("$[0].firstName").value("Long"))      // nome del primo giocatore
+                .andExpect(jsonPath("$[0].lastName").value("Ma"))         // cognome
+                .andExpect(jsonPath("$[0].email").value("aitho@test1.it")); // email
     }
 
     @Test
     void getAllPlayersEmptyList() throws Exception {
         when(playerService.getAllPlayers()).thenReturn(List.of());
-        mockMvc.perform(get("/api/players")).andExpect(status().isOk())          // 200
-                .andExpect(jsonPath("$").isEmpty()); // $ = tutto il JSON: deve essere []
+        mockMvc.perform(get("/api/players")).andExpect(status().isOk())   // 200
+                .andExpect(jsonPath("$").isEmpty());                      // $ = tutto il JSON: deve essere []
     }
 
 
@@ -66,12 +67,12 @@ public class PlayerControllerTest {
         savedPlayer.setEmail("aitho@test1.it");
         when(playerService.createPlayer(any(Player.class))).thenReturn(savedPlayer);
 
-        mockMvc.perform(post("/api/players").contentType(MediaType.APPLICATION_JSON).content("{\"firstName\": \"Chissu\", \"lastName\": \"Essere\", \"email\": \"aitho@test1.it\"}")).andExpect(status().isOk())                          // oggi il POST risponde 200 (non ancora 201)
+        mockMvc.perform(post("/api/players").contentType(MediaType.APPLICATION_JSON).content("{\"firstName\": \"Chissu\", \"lastName\": \"Essere\", \"email\": \"aitho@test1.it\"}"))
+                .andExpect(status().isOk())                          // oggi il POST risponde 200 (non ancora 201)
                 .andExpect(jsonPath("$.id").value(8))                // id del giocatore salvato
                 .andExpect(jsonPath("$.firstName").value("Chissu"))  // nome
-                .andExpect(jsonPath("$.lastName").value("Essere"))  // cognome  // cognome
-                .andExpect(jsonPath("$.email").value("aitho@test1.it"));  // email
-
+                .andExpect(jsonPath("$.lastName").value("Essere"))   // cognome
+                .andExpect(jsonPath("$.email").value("aitho@test1.it")); // email
     }
 
     // #2
@@ -84,7 +85,8 @@ public class PlayerControllerTest {
         when(playerService.updateEmailPlayer(6L, "aitho@test1.it")).thenReturn(getPlayerDTOMock());
 
         // #3
-        mockMvc.perform(patch("/api/players/6").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"aitho@test1.it\"}")).andExpect(status().isOk())
+        mockMvc.perform(patch("/api/players/6").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"aitho@test1.it\"}"))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("aitho@test1.it"));
     }
 
@@ -93,8 +95,8 @@ public class PlayerControllerTest {
     // riusato nei test del Controller al posto di ricrearlo ogni volta.
     private PlayerDTO getPlayerDTOMock() {
         // il PlayerDTO non ha setter: i dati passano dal costruttore
-        // (ordine: firstName, lastName, email)
-        return new PlayerDTO("Chissu", "Essere", "aitho@test1.it");
+        // (ordine: id, firstName, lastName, email)          ← aggiornato
+        return new PlayerDTO(6L, "Chissu", "Essere", "aitho@test1.it");   // ← id 6 = lo stesso della PATCH
     }
 
     // Test PATCH email non valida:
