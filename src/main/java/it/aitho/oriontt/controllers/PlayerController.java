@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 // List: viene da Java (java.util), non da Spring
-
+@CrossOrigin(origins = "http://localhost:5173")   // autorizza le chiamate dal frontend React
 @RestController
 // annotation: questa class riceve richieste HTTP e restituisce dati
 // Spring trasforma da solo il valore di ritorno in JSON
