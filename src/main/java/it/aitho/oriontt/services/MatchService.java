@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 public class MatchService {
 
@@ -38,6 +40,13 @@ public class MatchService {
     //   l'if sotto risponde 400 Bad Request
     // - /api/matches/90 → la conversione riesce, arriva qui, ma la partita non esiste:
     //   orElseThrow risponde 404 Not Found
+
+
+    // Restituisce tutte le partite della tabella matches
+    public List<Match> getAllMatches() {
+        return matchRepository.findAll();   // già pronto in JpaRepository: SELECT * FROM matches
+    }
+
     public Match getMatchById(Long id) {
 
         // id 0 o negativo: input sbagliato a priori → 400 Bad Request
