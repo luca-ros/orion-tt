@@ -3,6 +3,7 @@ package it.aitho.oriontt.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Match {
     private Player player2;
 
     @OneToMany(mappedBy = "match")
-    private List<MatchSet> matchSets;
+    private List<MatchSet> matchSets = new ArrayList<>();
 
     // vincitore: resta NULL finché la partita non è FINISHED
     @ManyToOne
