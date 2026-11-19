@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -173,6 +174,7 @@ public class MatchService {
             // qualcuno ha vinto 3 set → UPDATE del match: chiudo e salvo il vincitore
             match.setStatus(MatchStatus.FINISHED);
             match.setWinner(setsWonP1 == 3 ? match.getPlayer1() : match.getPlayer2());
+            match.setFinishedAt(LocalDateTime.now());
             // ? : = "se vero prendi il primo, altrimenti il secondo"
         } else {
             // nessuno a 3 → INSERT del set successivo vuoto (es. dopo il set 2 crea il set 3, 0-0)
