@@ -3,6 +3,7 @@ package it.aitho.oriontt.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,6 @@ public class Match {
     @JoinColumn(name = "player_1_id")
     private Player player1;
 
-
     @ManyToOne
     @JoinColumn(name = "player_2_id")
     private Player player2;
@@ -33,6 +33,9 @@ public class Match {
     @ManyToOne
     @JoinColumn(name = "winner_id")
     private Player winner;
+
+    @Column(name = "finished_at")
+    private LocalDateTime finishedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -104,5 +107,13 @@ public class Match {
     // setter: imposta la lista dei set
     public void setMatchSets(List<MatchSet> matchSets) {
         this.matchSets = matchSets;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 }

@@ -21,6 +21,9 @@ public class Player {
     @Column(name = "email")
     private String email;
 
+    @Column(name= "fitet_card_number")
+    private String fitetCardNumber;
+
     // costruttore vuoto: serve a JPA/Hibernate per creare l'oggetto Player
     // quando legge una riga dalla tabella players
     public Player() {
@@ -56,5 +59,13 @@ public class Player {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getFitetCardNumber() {
+        return fitetCardNumber;
+    }
+
+    public void setFitetCardNumber(String fitetCardNumber) {
+        this.fitetCardNumber = fitetCardNumber;
     }
 }
