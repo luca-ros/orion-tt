@@ -2,14 +2,17 @@ package it.aitho.oriontt.controllers;
 
 
 import it.aitho.oriontt.dto.PlayerDTO;
+import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.services.PlayerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -90,14 +93,6 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.email").value("aitho@test1.it"));
     }
 
-    // #1
-    // helper method: crea un PlayerDTO finto con dati pronti,
-    // riusato nei test del Controller al posto di ricrearlo ogni volta.
-    private PlayerDTO getPlayerDTOMock() {
-        // il PlayerDTO non ha setter: i dati passano dal costruttore
-        // (ordine: id, firstName, lastName, email)          ← aggiornato
-        return new PlayerDTO(6L, "Chissu", "Essere", "aitho@test1.it");   // ← id 6 = lo stesso della PATCH
-    }
 
     // Test PATCH email non valida:
     // mando "ciao" come email → mi aspetto 400 Bad Request.
@@ -108,6 +103,60 @@ public class PlayerControllerTest {
 
         mockMvc.perform(patch("/api/players/6").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"ciao\"}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    // GET /api/players/37/profile → 200 + JSON con i dati del profilo
+    @Test
+    void getPlayerProfile_whenPlayerExists_returns200() throws Exception {
+        // Arrange: quando il Controller chiama il Service finto con id 37,
+        // il Service restituisce il DTO finto creato dall'helper
+        when(playerService.getPlayerProfile(37L)).thenReturn(getPlayerProfileDTOMock());
+
+        // Act + Assert: chiamo l'endpoint e controllo status e campi del JSON
+        mockMvc.perform(get("/api/players/37/profile"))
+                .andExpect(status().isOk())                                    // 200
+                .andExpect(jsonPath("$.id").value(37))                        // $.id = campo id del JSON
+                .andExpect(jsonPath("$.firstName").value("Octopus"))
+                .andExpect(jsonPath("$.lastName").value("Tentacul"))
+                .andExpect(jsonPath("$.fitetCardNumber").value("Ot369Gnazzus"));
+    }
+
+    // GET /api/players/-2/profile → 400
+    @Test
+    void getPlayerProfile_whenIdInvalid_returns400() throws Exception {
+        when(playerService.getPlayerProfile(-2L))
+                .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid player id"));
+
+        mockMvc.perform(get("/api/players/-2/profile"))
+                .andExpect(status().isBadRequest());   // status 400
+    }
+
+    // GET /api/players/98/profile → 404
+    @Test
+    void getPlayerProfile_notFound_returns404() throws Exception {
+        when(playerService.getPlayerProfile(98L))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
+
+        mockMvc.perform(get("/api/players/98/profile"))
+                .andExpect(status().isNotFound());   // status 404
+    }
+
+    // #2 helper PlayerProfileDTO
+    // helper method: crea un PlayerProfileDTO finto con dati pronti,
+    // riusato nei test del Controller al posto di ricrearlo ogni volta.
+    private PlayerProfileDTO getPlayerProfileDTOMock() {
+        // il PlayerProfileDTO non ha setter: i dati passano dal costruttore
+        // (ordine: id, firstName, lastName, email)          ← aggiornato
+        return new PlayerProfileDTO(37L, "Octopus", "Tentacul", "Ot369Gnazzus");   // ← id 6 = lo stesso della PATCH
+    }
+
+    // #1 PlayerDTO
+    // helper method: crea un PlayerDTO finto con dati pronti,
+    // riusato nei test del Controller al posto di ricrearlo ogni volta.
+    private PlayerDTO getPlayerDTOMock() {
+        // il PlayerDTO non ha setter: i dati passano dal costruttore
+        // (ordine: id, firstName, lastName, email)          ← aggiornato
+        return new PlayerDTO(6L, "Chissu", "Essere", "aitho@test1.it");   // ← id 6 = lo stesso della PATCH
     }
 
 }
