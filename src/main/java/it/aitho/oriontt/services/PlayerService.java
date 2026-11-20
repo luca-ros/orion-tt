@@ -1,6 +1,7 @@
 package it.aitho.oriontt.services;
 
 import it.aitho.oriontt.dto.PlayerDTO;
+import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.repositories.PlayerRepository;
 import org.springframework.http.HttpStatus;
@@ -54,5 +55,14 @@ public class PlayerService {
     // se domani aggiungi un campo al DTO, lo cambi solo qui
     private PlayerDTO toDTO(Player player) {
         return new PlayerDTO(player.getId(), player.getFirstName(), player.getLastName(), player.getEmail());
+    }
+
+    // GET PlayerProfile api/players/{id}/profile
+    public PlayerProfileDTO getPlayerProfile(Long id) {
+        if (id <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid player id");
+        }
+        Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
+        return new PlayerProfileDTO(player.getId(), player.getFirstName(), player.getLastName(), player.getFitetCardNumber());
     }
 }

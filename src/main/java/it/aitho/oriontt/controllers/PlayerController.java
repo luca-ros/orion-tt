@@ -2,6 +2,7 @@ package it.aitho.oriontt.controllers;
 
 import it.aitho.oriontt.dto.EmailUpdateDTO;
 import it.aitho.oriontt.dto.PlayerDTO;
+import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.services.PlayerService;
 import jakarta.validation.Valid;
@@ -64,4 +65,11 @@ public class PlayerController {
         //restituisci quello che ti dà il Service
         return playerService.updateEmailPlayer(id, request.getEmail());
     }
+
+    // GET PlayerProfile api/players/{id}/profile
+    @GetMapping("/{id}/profile")
+    public PlayerProfileDTO getPlayerProfile(@PathVariable Long id) {
+        return playerService.getPlayerProfile(id);
+    }
+
 }
