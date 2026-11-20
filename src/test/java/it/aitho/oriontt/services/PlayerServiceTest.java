@@ -1,7 +1,7 @@
 package it.aitho.oriontt.services;
 
 import it.aitho.oriontt.dto.PlayerDTO;
-import it.aitho.oriontt.entities.Match;
+import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.repositories.PlayerRepository;
 import org.junit.jupiter.api.Test;
@@ -9,99 +9,138 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 public class PlayerServiceTest {
 
     @Mock
-    private PlayerRepository playerRepository;
+    private PlayerRepository playerRepository; // Repository finto: niente DB
 
     @InjectMocks
-    private PlayerService playerService;
+    private PlayerService playerService; // Service vero, con dentro il Repository finto
 
+    // GET /api/players
     @Test
-// @Test: questo method è un test, JUnit lo esegue
     void getAllPlayers() {
-        // 2. dico al Repository finto cosa restituire
-        when(playerRepository.findAll()).thenReturn(List.of(getPlayerMock()));
-        // "quando il Service chiama findAll(), restituisci una lista con questo Player"
+        // Arrange: quando il Service chiama findAll(), il Repository finto restituisce una lista con un Player
         // il Repository restituisce Player (non DTO): la trasformazione la fa il Service
+        when(playerRepository.findAll()).thenReturn(List.of(getPlayerMock()));
 
-        // 3. chiamo il Service vero
+        // Act: chiamo il Service vero, result = lista di DTO creata dal Service
         List<PlayerDTO> result = playerService.getAllPlayers();
-        // result = la lista di DTO creata dal Service
 
-        // 4. controllo che il Service abbia trasformato bene il Player in DTO
+        // Assert: il Service ha trasformato bene il Player in DTO
+        // get(0) = primo elemento della lista; assertEquals(atteso, reale): se diversi il test è rosso
         assertEquals("Long", result.get(0).getFirstName());
         assertEquals("Ma", result.get(0).getLastName());
-        // get(0) = primo elemento della lista (un PlayerDTO)
-        // .getFirstName() = getter del DTO: legge il nome
-        // assertEquals(atteso, reale): se non coincidono il test diventa rosso
     }
 
+    // GET /api/players (lista vuota)
     @Test
     void getAllPlayersEmptyList() {
         when(playerRepository.findAll()).thenReturn(List.of());
-        List<PlayerDTO> result = playerService.getAllPlayers();
-        assertTrue(result.isEmpty()); // vero se la lista non ha elementi
 
+        List<PlayerDTO> result = playerService.getAllPlayers();
+
+        assertTrue(result.isEmpty()); // vero se la lista non ha elementi
     }
 
+    // POST /api/players
     @Test
-        // preparo i dati finti:
     void createPlayer() {
-        // giocatore come arriva da Postman: senza id
+        // Arrange: giocatore come arriva da Postman (senza id)
         Player player = new Player();
         player.setFirstName("Chissu");
         player.setLastName("Essere");
 
-        // giocatore dopo il salvataggio nel DB Ha un ID che deve tornare al Service
+        // giocatore dopo il salvataggio nel DB: ha l'id
         Player savedPlayer = new Player();
         savedPlayer.setId(8L);
         savedPlayer.setFirstName("Chissu");
         savedPlayer.setLastName("Essere");
 
-        // dico al Repository finto cosa restituire al Service
         when(playerRepository.save(player)).thenReturn(savedPlayer);
 
-        //  chiamo il Service vero
+        // Act
         Player result = playerService.createPlayer(player);
 
-        //  controllo che il Service restituisca il giocatore salvato, con id, first name e last name
+        // Assert: il Service restituisce il giocatore salvato, con id, first name e last name
         assertEquals(8L, result.getId());
         assertEquals("Chissu", result.getFirstName());
         assertEquals("Essere", result.getLastName());
-
     }
 
+    // PATCH /api/players/{id}/email   ← verifica l'URL esatto nel tuo Controller
     @Test
     void updateEmailPlayer() {
-        // quando il Service cerca l'id 1L, il repository finto restituisce il giocatore dentro un Optional
+        // Arrange: findById restituisce un Optional, quindi Optional.of(...)
         when(playerRepository.findById(1L)).thenReturn(Optional.of(getPlayerMock()));
 
-        // chiamo il Service vero con un'email "sporca"
+        // Act: email "sporca" (con maiuscole)
         PlayerDTO result = playerService.updateEmailPlayer(1L, "ma.Long@gmail.it");
 
-        // verifico che l'email sia stata sanificata
+        // Assert: l'email è stata sanificata (tutta minuscola)
         assertEquals("ma.long@gmail.it", result.getEmail());
     }
 
-    private Player getPlayerMock() {
-        Player player = new Player();
-        player.setFirstName("Long");
-        player.setLastName("Ma");
-        return player;
+    // GET /api/players/{id}/profile
+    @Test
+    void getPlayerProfile_whenPlayerExists_returnsProfile() {
+        // Arrange: il Repository finto restituisce il Player di getPlayerMock()
+        when(playerRepository.findById(1L)).thenReturn(Optional.of(getPlayerMock()));
+
+        // Act: chiamo il Service con il solo id
+        PlayerProfileDTO result = playerService.getPlayerProfile(1L);
+
+        // Assert: i campi del DTO sono quelli del Player finto
+        assertEquals(1L, result.getId());
+        assertEquals("Long", result.getFirstName());
+        assertEquals("Ma", result.getLastName());
+        assertEquals("IT12345", result.getFitetCardNumber());
     }
 
+    // GET /api/players/{id}/profile 400
+    @Test
+    void getPlayerProfile_whenIdIsInvalid_throwsBadRequest() {
+        // Arrange (when): Qui Non serve, Il Repository qui non viene mai chiamato, con id -1 il Service si ferma all’if
 
+        // Act + Assert: getPlayerProfile deve lanciare l’eccezione
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> playerService.getPlayerProfile(-1L));
+        // Assert: lo status dentro l'eccezione deve essere 400 BAD_REQUEST
+        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        //           ↑ atteso               ↑ attuale (letto dall'eccezione)
+    }
+
+    // GET /api/players/{id}/profile 404
+    @Test
+    void getPlayerProfile_whenIdIsNotFound_throwsNotFound() {
+        // Arrange: il Repository finto restituisce un Optional vuoto
+        when(playerRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act + Assert: getPlayerProfile deve lanciare l’eccezione
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> playerService.getPlayerProfile(999L));
+        // Assert: lo status dentro l'eccezione deve essere 404 NOT_FOUND
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        //           ↑ atteso               ↑ attuale (letto dall'eccezione)
+    }
+
+    // helper method: Player finto riusato in più test
+    private Player getPlayerMock() {
+        Player player = new Player();
+        player.setId(1L);
+        player.setFirstName("Long");
+        player.setLastName("Ma");
+        player.setFitetCardNumber("IT12345");
+        return player;
+    }
 }
