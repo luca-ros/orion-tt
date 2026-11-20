@@ -1,7 +1,9 @@
 package it.aitho.oriontt.services;
 
 import it.aitho.oriontt.dto.PlayerDTO;
+import it.aitho.oriontt.dto.PlayerMatchDTO;
 import it.aitho.oriontt.dto.PlayerProfileDTO;
+import it.aitho.oriontt.entities.Match;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.repositories.PlayerRepository;
 import org.springframework.http.HttpStatus;
@@ -64,5 +66,23 @@ public class PlayerService {
         }
         Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
         return new PlayerProfileDTO(player.getId(), player.getFirstName(), player.getLastName(), player.getFitetCardNumber());
+    }
+
+    // GET /api/players/{id}/matches
+    public List<PlayerMatchDTO> getPlayerMatches(Long id) {
+
+        if (id <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid player id");
+        }
+
+        // cerco il GIOCATORE (playerRepository)
+        // se non esiste → 404
+        Player player = playerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
+
+        //TODO
+        // (partite + avversario): li facciamo dopo
+        // per ora restituisco una lista vuota
+        return List.of();
     }
 }

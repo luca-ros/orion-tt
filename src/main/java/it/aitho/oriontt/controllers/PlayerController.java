@@ -2,6 +2,7 @@ package it.aitho.oriontt.controllers;
 
 import it.aitho.oriontt.dto.EmailUpdateDTO;
 import it.aitho.oriontt.dto.PlayerDTO;
+import it.aitho.oriontt.dto.PlayerMatchDTO;
 import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.services.PlayerService;
@@ -70,6 +71,12 @@ public class PlayerController {
     @GetMapping("/{id}/profile")
     public PlayerProfileDTO getPlayerProfile(@PathVariable Long id) {
         return playerService.getPlayerProfile(id);
+    }
+
+    // GET PlayerMatches api/players/{id}/matches
+    @GetMapping("/{id}/matches")
+    public List<PlayerMatchDTO> getPlayerMatches(@PathVariable Long id) {
+        return playerService.getPlayerMatches(id);
     }
 
 }
