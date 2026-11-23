@@ -118,6 +118,9 @@ public class PlayerService {
                     match.getFinishedAt()         // data di fine (null se non finita)
             );
 
+            // lo aggiungo alla lista risultato
+            result.add(dto);
+
         }
 
         // restituisco la lista dei DTO (vuota se il giocatore non ha partite)
