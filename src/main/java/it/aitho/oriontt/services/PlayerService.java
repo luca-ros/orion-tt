@@ -107,15 +107,16 @@ public class PlayerService {
                 won = false;                                   // ha vinto l'avversario
             }
             // creo il DTO con i dati di questa partita
-            MatchSummaryDTO dto = new MatchSummaryDTO(match.getId(),        // matchId
-                    opponent.getFirstName(),     // nome avversario
-                    opponent.getLastName(),     // cognome avversario
-                    match.getStatus(),        // status
-                    won           // won
+            // creo il DTO con i dati di questa partita
+            MatchSummaryDTO dto = new MatchSummaryDTO(
+                    match.getId(),                // matchId
+                    opponent.getFirstName(),      // nome avversario
+                    opponent.getLastName(),       // cognome avversario
+                    match.getStatus(),            // status
+                    won,                          // won (calcolato sopra)
+                    match.getPlannedDate(),       // data prevista
+                    match.getFinishedAt()         // data di fine (null se non finita)
             );
-
-            // lo aggiungo alla lista risultato
-            result.add(dto);
 
         }
 
