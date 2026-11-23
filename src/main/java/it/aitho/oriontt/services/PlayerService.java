@@ -2,7 +2,6 @@ package it.aitho.oriontt.services;
 
 import it.aitho.oriontt.dto.MatchSummaryDTO;
 import it.aitho.oriontt.dto.PlayerDTO;
-import it.aitho.oriontt.dto.PlayerMatchDTO;
 import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Match;
 import it.aitho.oriontt.entities.Player;
@@ -49,8 +48,7 @@ public class PlayerService {
     // PATCH /api/players/{id} → aggiorna l'email
     // 404 se il giocatore non esiste; email salvata in minuscolo
     public PlayerDTO updateEmailPlayer(Long id, String email) {
-        Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
+        Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
 
         player.setEmail(email.toLowerCase());   // sanificazione: tutto minuscolo
         playerRepository.save(player);          // ha già un id → UPDATE
@@ -81,12 +79,47 @@ public class PlayerService {
 
         // cerco il GIOCATORE (playerRepository)
         // se non esiste → 404
-        Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
+        Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
 
-        // (partite + avversario)
         // cerco tutte le partite dove il giocatore (id) è player1 OPPURE player2
         List<Match> matches = matchRepository.findByPlayer1IdOrPlayer2Id(id, id);
-        return List.of();
+
+        // lista risultato: all'inizio vuota, la riempio nel ciclo
+        List<MatchSummaryDTO> result = new ArrayList<>();
+
+        // per ogni partita del giocatore...
+        for (Match match : matches) {
+
+            // chi è l'avversario? dipende da dove si trova il giocatore del profilo
+            Player opponent;
+            if (match.getPlayer1().getId().equals(id)) {
+                opponent = match.getPlayer2();
+            } else {
+                opponent = match.getPlayer1();
+            }
+            // risultato visto dal giocatore del profilo
+            Boolean won;
+            if (match.getWinner() == null) {
+                won = null;                                   // partita non ancora finita
+            } else if (match.getWinner().getId().equals(id)) {
+                won = true;                                   // ho vinto io
+            } else {
+                won = false;                                   // ha vinto l'avversario
+            }
+            // creo il DTO con i dati di questa partita
+            MatchSummaryDTO dto = new MatchSummaryDTO(match.getId(),        // matchId
+                    opponent.getFirstName(),     // nome avversario
+                    opponent.getLastName(),     // cognome avversario
+                    match.getStatus(),        // status
+                    won           // won
+            );
+
+            // lo aggiungo alla lista risultato
+            result.add(dto);
+
+        }
+
+        // restituisco la lista dei DTO (vuota se il giocatore non ha partite)
+        return result;
     }
 }
