@@ -1,21 +1,21 @@
 package it.aitho.oriontt.dto;
 
+import java.util.List;
+
 public class PlayerProfileDTO {
 
     private Long id;          // serve al frontend per scegliere il giocatore: api/players/6/profile
     private String firstName;
     private String lastName;
     private String fitetCardNumber;
+    private List<MatchSummaryDTO> matches;
 
-    public PlayerProfileDTO(Long id, String firstName, String lastName, String fitetCardNumber) {
-        // parametro = tipo + nome (Long id), mai due tipi
+    public PlayerProfileDTO(Long id, String firstName, String lastName, String fitetCardNumber, List<MatchSummaryDTO> matches) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.fitetCardNumber = fitetCardNumber;
-        // campo ← parametro: salvo i valori passati dal Service nei campi del DTO
-        // this = "di questa class": distingue il campo dal parametro (hanno lo stesso nome)
-        // senza queste righe i campi resterebbero null → nel JSON "firstName": null
+        this.matches = matches;
     }
 
     public Long getId() {
@@ -32,5 +32,9 @@ public class PlayerProfileDTO {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public List<MatchSummaryDTO> getMatches() {
+        return matches;
     }
 }

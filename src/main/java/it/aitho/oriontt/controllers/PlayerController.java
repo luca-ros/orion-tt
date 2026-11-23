@@ -1,9 +1,6 @@
 package it.aitho.oriontt.controllers;
 
-import it.aitho.oriontt.dto.EmailUpdateDTO;
-import it.aitho.oriontt.dto.PlayerDTO;
-import it.aitho.oriontt.dto.PlayerMatchDTO;
-import it.aitho.oriontt.dto.PlayerProfileDTO;
+import it.aitho.oriontt.dto.*;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.services.PlayerService;
 import jakarta.validation.Valid;
@@ -75,7 +72,7 @@ public class PlayerController {
 
     // GET PlayerMatches api/players/{id}/matches
     @GetMapping("/{id}/matches")
-    public List<PlayerMatchDTO> getPlayerMatches(@PathVariable Long id) {
+    public List<MatchSummaryDTO> getPlayerMatches(@PathVariable Long id) {
         return playerService.getPlayerMatches(id);
     }
 

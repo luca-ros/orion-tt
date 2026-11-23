@@ -3,6 +3,7 @@ package it.aitho.oriontt.services;
 import it.aitho.oriontt.dto.PlayerDTO;
 import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Player;
+import it.aitho.oriontt.repositories.MatchRepository;
 import it.aitho.oriontt.repositories.PlayerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,8 @@ public class PlayerServiceTest {
 
     @Mock
     private PlayerRepository playerRepository; // Repository finto: niente DB
+    @Mock
+    private MatchRepository matchRepository;
 
     @InjectMocks
     private PlayerService playerService; // Service vero, con dentro il Repository finto

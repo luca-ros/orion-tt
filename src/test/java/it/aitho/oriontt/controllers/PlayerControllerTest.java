@@ -1,6 +1,5 @@
 package it.aitho.oriontt.controllers;
 
-
 import it.aitho.oriontt.dto.PlayerDTO;
 import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Player;
@@ -145,9 +144,15 @@ public class PlayerControllerTest {
     // helper method: crea un PlayerProfileDTO finto con dati pronti,
     // riusato nei test del Controller al posto di ricrearlo ogni volta.
     private PlayerProfileDTO getPlayerProfileDTOMock() {
-        // il PlayerProfileDTO non ha setter: i dati passano dal costruttore
-        // (ordine: id, firstName, lastName, email)          ← aggiornato
-        return new PlayerProfileDTO(37L, "Octopus", "Tentacul", "Ot369Gnazzus");   // ← id 6 = lo stesso della PATCH
+        // il PlayerProfileDTO non ha setter: i dati passano dal constructor
+        // ordine: id, firstName, lastName, fitetCardNumber, matches
+        return new PlayerProfileDTO(
+                37L,               // id
+                "Octopus",         // firstName
+                "Tentacul",        // lastName
+                "Ot369Gnazzus",    // fitetCardNumber
+                List.of()          // matches: lista vuota (per ora il test non controlla le partite)
+        );
     }
 
     // #1 PlayerDTO

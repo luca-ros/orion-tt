@@ -1,10 +1,12 @@
 package it.aitho.oriontt.services;
 
+import it.aitho.oriontt.dto.MatchSummaryDTO;
 import it.aitho.oriontt.dto.PlayerDTO;
 import it.aitho.oriontt.dto.PlayerMatchDTO;
 import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Match;
 import it.aitho.oriontt.entities.Player;
+import it.aitho.oriontt.repositories.MatchRepository;
 import it.aitho.oriontt.repositories.PlayerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,12 +19,14 @@ import java.util.List;
 // annotation: Spring crea questa class e la può passare al Controller (Dependency Injection)
 public class PlayerService {
 
-    // il Repository che legge la tabella players
+    // il Repository che legge la tabella players e matches
     private final PlayerRepository playerRepository;
+    private final MatchRepository matchRepository;
 
-    // costruttore: Spring passa qui il PlayerRepository (constructor injection)
-    public PlayerService(PlayerRepository playerRepository) {
+    // constructor: Spring passa qui i due Repository (constructor injection)
+    public PlayerService(PlayerRepository playerRepository, MatchRepository matchRepository) {
         this.playerRepository = playerRepository;   // campo ← parametro
+        this.matchRepository = matchRepository;
     }
 
     // GET /api/players → tutti i giocatori come DTO
@@ -65,11 +69,11 @@ public class PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid player id");
         }
         Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
-        return new PlayerProfileDTO(player.getId(), player.getFirstName(), player.getLastName(), player.getFitetCardNumber());
+        return new PlayerProfileDTO(player.getId(), player.getFirstName(), player.getLastName(), player.getFitetCardNumber(), getPlayerMatches(id));
     }
 
     // GET /api/players/{id}/matches
-    public List<PlayerMatchDTO> getPlayerMatches(Long id) {
+    public List<MatchSummaryDTO> getPlayerMatches(Long id) {
 
         if (id <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid player id");
@@ -80,9 +84,9 @@ public class PlayerService {
         Player player = playerRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
 
-        //TODO
-        // (partite + avversario): li facciamo dopo
-        // per ora restituisco una lista vuota
+        // (partite + avversario)
+        // cerco tutte le partite dove il giocatore (id) è player1 OPPURE player2
+        List<Match> matches = matchRepository.findByPlayer1IdOrPlayer2Id(id, id);
         return List.of();
     }
 }
