@@ -4,6 +4,7 @@ import it.aitho.oriontt.dto.MatchSummaryDTO;
 import it.aitho.oriontt.dto.PlayerDTO;
 import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Match;
+import it.aitho.oriontt.entities.MatchSet;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.repositories.MatchRepository;
 import it.aitho.oriontt.repositories.PlayerRepository;
@@ -66,6 +67,7 @@ public class PlayerService {
         if (id <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid player id");
         }
+        //dichiarazione di variabile player locale con inizializzazione
         Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
         return new PlayerProfileDTO(player.getId(), player.getFirstName(), player.getLastName(), player.getFitetCardNumber(), getPlayerMatches(id));
     }
@@ -85,19 +87,23 @@ public class PlayerService {
         List<Match> matches = matchRepository.findByPlayer1IdOrPlayer2Id(id, id);
 
         // lista risultato: all'inizio vuota, la riempio nel ciclo
+
         List<MatchSummaryDTO> result = new ArrayList<>();
 
-        // per ogni partita del giocatore...
+        // ciclo ESTERNO: per ogni partita del giocatore
+        // per ogni match di tipo Match dentro la lista matches
         for (Match match : matches) {
 
-            // chi è l'avversario? dipende da dove si trova il giocatore del profilo
+            // avversario
             Player opponent;
+            // id del player1 della partita == id del profilo (dall'URL)? → allora io sono player1
             if (match.getPlayer1().getId().equals(id)) {
                 opponent = match.getPlayer2();
             } else {
                 opponent = match.getPlayer1();
             }
-            // risultato visto dal giocatore del profilo
+
+            // vinta / persa / null
             Boolean won;
             if (match.getWinner() == null) {
                 won = null;                                   // partita non ancora finita
@@ -106,7 +112,27 @@ public class PlayerService {
             } else {
                 won = false;                                   // ha vinto l'avversario
             }
-            // creo il DTO con i dati di questa partita
+
+            int setsWon = 0;
+            int opponentSetsWon = 0;
+            // serve per leggere i MIEI punti nel set: player1Points se true, player2Points se false
+            boolean isPlayer1 = match.getPlayer1().getId().equals(id);
+
+            // ciclo INTERNO: i set di questa partita
+            for (MatchSet set : match.getMatchSets()) {
+                int myPoints = isPlayer1 ? set.getPlayer1Points() : set.getPlayer2Points();
+                int opponentPoints = isPlayer1 ? set.getPlayer2Points() : set.getPlayer1Points();
+
+                if (myPoints == opponentPoints) {
+                    continue;
+                }
+                if (myPoints > opponentPoints) {
+                    setsWon++;
+                } else {
+                    opponentSetsWon++;
+                }
+            }
+
             // creo il DTO con i dati di questa partita
             MatchSummaryDTO dto = new MatchSummaryDTO(
                     match.getId(),                // matchId
@@ -115,7 +141,9 @@ public class PlayerService {
                     match.getStatus(),            // status
                     won,                          // won (calcolato sopra)
                     match.getPlannedDate(),       // data prevista
-                    match.getFinishedAt()         // data di fine (null se non finita)
+                    match.getFinishedAt(),         // data di fine (null se non finita)
+                    setsWon,
+                    opponentSetsWon
             );
 
             // lo aggiungo alla lista risultato
