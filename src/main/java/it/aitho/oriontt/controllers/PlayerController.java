@@ -63,13 +63,14 @@ public class PlayerController {
         //restituisci quello che ti dà il Service
         return playerService.updateEmailPlayer(id, request.getEmail());
     }
-
+    // TODO  RIPASSO:
     // GET PlayerProfile api/players/{id}/profile
     @GetMapping("/{id}/profile")
     public PlayerProfileDTO getPlayerProfile(@PathVariable Long id) {
+
         return playerService.getPlayerProfile(id);
     }
-
+    // TODO  RIPASSO:
     // GET PlayerMatches api/players/{id}/matches
     @GetMapping("/{id}/matches")
     public List<MatchSummaryDTO> getPlayerMatches(@PathVariable Long id) {

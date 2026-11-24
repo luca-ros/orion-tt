@@ -16,10 +16,12 @@ public class MatchSummaryDTO {
     private Boolean won;                // true = vinta, false = persa, null = non ancora finita
     private Date plannedDate;           // data prevista (stesso tipo di Match.getPlannedDate())
     private LocalDateTime finishedAt;   // data di fine, null se non ancora finita (stesso tipo di Match.getFinishedAt())
+    private int setsWon;
+    private int opponentSetsWon;
 
     // constructor: lo chiama il Service per riempire il DTO con i dati presi dal DB
     public MatchSummaryDTO(Long matchId, String opponentFirstName, String opponentLastName,
-                           MatchStatus status, Boolean won, Date plannedDate, LocalDateTime finishedAt) {
+                           MatchStatus status, Boolean won, Date plannedDate, LocalDateTime finishedAt, int setsWon, int opponentSetsWon) {
         this.matchId = matchId;
         this.opponentFirstName = opponentFirstName;
         this.opponentLastName = opponentLastName;
@@ -27,6 +29,8 @@ public class MatchSummaryDTO {
         this.won = won;
         this.plannedDate = plannedDate;
         this.finishedAt = finishedAt;
+        this.setsWon = setsWon;
+        this.opponentSetsWon = opponentSetsWon;
     }
 
     // getter: Spring li usa per creare il JSON (senza getter → JSON vuoto {})
@@ -58,5 +62,13 @@ public class MatchSummaryDTO {
 
     public LocalDateTime getFinishedAt() {
         return finishedAt;
+    }
+
+    public int getSetsWon() {
+        return setsWon;
+    }
+
+    public int getOpponentSetsWon() {
+        return opponentSetsWon;
     }
 }
