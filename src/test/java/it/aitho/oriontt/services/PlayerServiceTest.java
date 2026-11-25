@@ -61,14 +61,14 @@ public class PlayerServiceTest {
     void createPlayer() {
         // Arrange: giocatore come arriva da Postman (senza id)
         Player player = new Player();
-        player.setFirstName("Chissu");
-        player.setLastName("Essere");
+        player.getAccount().setFirstName("Chissu");
+        player.getAccount().setLastName("Essere");
 
         // giocatore dopo il salvataggio nel DB: ha l'id
         Player savedPlayer = new Player();
         savedPlayer.setId(8L);
-        savedPlayer.setFirstName("Chissu");
-        savedPlayer.setLastName("Essere");
+        savedPlayer.getAccount().setFirstName("Chissu");
+        savedPlayer.getAccount().setLastName("Essere");
 
         when(playerRepository.save(player)).thenReturn(savedPlayer);
 
@@ -77,8 +77,8 @@ public class PlayerServiceTest {
 
         // Assert: il Service restituisce il giocatore salvato, con id, first name e last name
         assertEquals(8L, result.getId());
-        assertEquals("Chissu", result.getFirstName());
-        assertEquals("Essere", result.getLastName());
+        assertEquals("Chissu", result.getAccount().getFirstName());
+        assertEquals("Essere", result.getAccount().getLastName());
     }
 
     // PATCH /api/players/{id}/email   ← verifica l'URL esatto nel tuo Controller
@@ -141,8 +141,8 @@ public class PlayerServiceTest {
     private Player getPlayerMock() {
         Player player = new Player();
         player.setId(1L);
-        player.setFirstName("Long");
-        player.setLastName("Ma");
+        player.getAccount().setFirstName("Long");
+        player.getAccount().setLastName("Ma");
         player.setFitetCardNumber("IT12345");
         return player;
     }

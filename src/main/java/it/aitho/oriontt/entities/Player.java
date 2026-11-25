@@ -12,29 +12,16 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name= "fitet_card_number")
+    @Column(name = "fitet_card_number")
     private String fitetCardNumber;
+
+    @OneToOne
+    @JoinColumn(name = "account_id", unique = true)
+    private Account account;
 
     // costruttore vuoto: serve a JPA/Hibernate per creare l'oggetto Player
     // quando legge una riga dalla tabella players
     public Player() {
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Long getId() {
@@ -45,21 +32,6 @@ public class Player {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public String getFitetCardNumber() {
         return fitetCardNumber;
@@ -67,5 +39,13 @@ public class Player {
 
     public void setFitetCardNumber(String fitetCardNumber) {
         this.fitetCardNumber = fitetCardNumber;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 }

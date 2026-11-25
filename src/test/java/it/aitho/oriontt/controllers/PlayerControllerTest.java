@@ -64,9 +64,9 @@ public class PlayerControllerTest {
         // giocatore come lo restituisce il Service finto: già salvato, con id
         Player savedPlayer = new Player();
         savedPlayer.setId(8L);
-        savedPlayer.setFirstName("Chissu");
-        savedPlayer.setLastName("Essere");
-        savedPlayer.setEmail("aitho@test1.it");
+        savedPlayer.getAccount().setFirstName("Chissu");
+        savedPlayer.getAccount().setLastName("Essere");
+        savedPlayer.getAccount().setEmail("aitho@test1.it");
         when(playerService.createPlayer(any(Player.class))).thenReturn(savedPlayer);
 
         mockMvc.perform(post("/api/players").contentType(MediaType.APPLICATION_JSON).content("{\"firstName\": \"Chissu\", \"lastName\": \"Essere\", \"email\": \"aitho@test1.it\"}"))

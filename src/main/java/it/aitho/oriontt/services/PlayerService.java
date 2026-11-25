@@ -51,7 +51,7 @@ public class PlayerService {
     public PlayerDTO updateEmailPlayer(Long id, String email) {
         Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
 
-        player.setEmail(email.toLowerCase());   // sanificazione: tutto minuscolo
+        player.getAccount().setEmail(email.toLowerCase());   // sanificazione: tutto minuscolo
         playerRepository.save(player);          // ha già un id → UPDATE
         return toDTO(player);
     }
@@ -59,7 +59,7 @@ public class PlayerService {
     // Converte Entity → DTO in UN solo punto:
     // se domani aggiungi un campo al DTO, lo cambi solo qui
     private PlayerDTO toDTO(Player player) {
-        return new PlayerDTO(player.getId(), player.getFirstName(), player.getLastName(), player.getEmail());
+        return new PlayerDTO(player.getId(), player.getAccount().getFirstName(), player.getAccount().getLastName(), player.getAccount().getEmail());
     }
 
     // GET PlayerProfile api/players/{id}/profile
@@ -69,7 +69,7 @@ public class PlayerService {
         }
         //dichiarazione di variabile player locale con inizializzazione
         Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
-        return new PlayerProfileDTO(player.getId(), player.getFirstName(), player.getLastName(), player.getFitetCardNumber(), getPlayerMatches(id));
+        return new PlayerProfileDTO(player.getId(), player.getAccount().getFirstName(), player.getAccount().getLastName(), player.getFitetCardNumber(), getPlayerMatches(id));
     }
 
     // GET /api/players/{id}/matches
@@ -136,8 +136,8 @@ public class PlayerService {
             // creo il DTO con i dati di questa partita
             MatchSummaryDTO dto = new MatchSummaryDTO(
                     match.getId(),                // matchId
-                    opponent.getFirstName(),      // nome avversario
-                    opponent.getLastName(),       // cognome avversario
+                    opponent.getAccount().getFirstName(),      // nome avversario
+                    opponent.getAccount().getLastName(),       // cognome avversario
                     match.getStatus(),            // status
                     won,                          // won (calcolato sopra)
                     match.getPlannedDate(),       // data prevista
