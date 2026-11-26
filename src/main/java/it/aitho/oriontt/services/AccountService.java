@@ -38,13 +38,14 @@ public class AccountService {
         account.setEmail(email);
         account.setStatus(AccountStatus.PENDING);
         account.setRole(AccountRole.PLAYER);
+        account.setFitetCardNumber(request.getFitetCardNumber());
 
         accountRepository.save(account);    // id null → INSERT nel DB
         return filterEntityToDTO(account);  // Account → AccountDTO per la risposta
     }
 
     private AccountDTO filterEntityToDTO(Account account) {
-        return new AccountDTO(account.getId(), account.getFirstName(), account.getLastName(), account.getEmail());
+        return new AccountDTO(account.getId(), account.getFirstName(), account.getLastName(), account.getEmail(), account.getFitetCardNumber());
     }
 
 }

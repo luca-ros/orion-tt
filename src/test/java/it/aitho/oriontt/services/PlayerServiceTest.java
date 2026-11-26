@@ -143,7 +143,7 @@ public class PlayerServiceTest {
         player.setId(1L);
         player.getAccount().setFirstName("Long");
         player.getAccount().setLastName("Ma");
-        player.setFitetCardNumber("IT12345");
+        player.getAccount().setFitetCardNumber("IT12345");
         return player;
     }
 }

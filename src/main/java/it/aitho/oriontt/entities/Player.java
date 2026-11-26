@@ -12,9 +12,6 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "fitet_card_number")
-    private String fitetCardNumber;
-
     @OneToOne
     @JoinColumn(name = "account_id", unique = true)
     private Account account;
@@ -30,15 +27,6 @@ public class Player {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-
-    public String getFitetCardNumber() {
-        return fitetCardNumber;
-    }
-
-    public void setFitetCardNumber(String fitetCardNumber) {
-        this.fitetCardNumber = fitetCardNumber;
     }
 
     public Account getAccount() {

@@ -26,12 +26,12 @@ public class PlayerProfileDTO {
         return firstName;
     }
 
-    public String getFitetCardNumber() {
-        return fitetCardNumber;
-    }
-
     public String getLastName() {
         return lastName;
+    }
+
+    public String getFitetCardNumber() {
+        return fitetCardNumber;
     }
 
     public List<MatchSummaryDTO> getMatches() {

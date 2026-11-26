@@ -1,5 +1,6 @@
 package it.aitho.oriontt.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 // Entity: Hibernate crea la tabella "accounts" partendo da questa class
@@ -16,6 +17,8 @@ public class Account {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    // TODO: sostituire @JsonIgnore con un DTO per le partite (per non esporre l'entity Account)
+    @JsonIgnore
     @Column(name = "password_hash", length = 255)
     private String passwordHash;
 
@@ -36,17 +39,15 @@ public class Account {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @Column(name = "fitet_card_number")
+    private String fitetCardNumber;
+
 
     // costruttore vuoto: JPA lo usa per creare l'oggetto prima di riempirlo coi dati del DB
     public Account() {
     }
 
     // getter e setter: JPA e Spring li usano per leggere e scrivere i campi
-    public Long getId() { return id; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
     public String getPasswordHash() {
         return passwordHash;
     }
@@ -55,16 +56,55 @@ public class Account {
         this.passwordHash = passwordHash;
     }
 
-    public AccountRole getRole() { return role; }
-    public void setRole(AccountRole role) { this.role = role; }
+    public Long getId() {
+        return id;
+    }
 
-    public AccountStatus getStatus() { return status; }
-    public void setStatus(AccountStatus status) { this.status = status; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public AccountRole getRole() {
+        return role;
+    }
 
+    public void setRole(AccountRole role) {
+        this.role = role;
+    }
+
+    public AccountStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AccountStatus status) {
+        this.status = status;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFitetCardNumber() {
+        return fitetCardNumber;
+    }
+
+    public void setFitetCardNumber(String fitetCardNumber) {
+        this.fitetCardNumber = fitetCardNumber;
+    }
 }

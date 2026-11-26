@@ -69,7 +69,7 @@ public class PlayerService {
         }
         //dichiarazione di variabile player locale con inizializzazione
         Player player = playerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
-        return new PlayerProfileDTO(player.getId(), player.getAccount().getFirstName(), player.getAccount().getLastName(), player.getFitetCardNumber(), getPlayerMatches(id));
+        return new PlayerProfileDTO(player.getId(), player.getAccount().getFirstName(), player.getAccount().getLastName(), player.getAccount().getFitetCardNumber(), getPlayerMatches(id));
     }
 
     // GET /api/players/{id}/matches
