@@ -1,12 +1,10 @@
 package it.aitho.oriontt.services;
 
 import it.aitho.oriontt.dto.AccountDTO;
-import it.aitho.oriontt.dto.PlayerDTO;
 import it.aitho.oriontt.dto.RegisterRequestDTO;
 import it.aitho.oriontt.entities.Account;
 import it.aitho.oriontt.entities.AccountRole;
 import it.aitho.oriontt.entities.AccountStatus;
-import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.repositories.AccountRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

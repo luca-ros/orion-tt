@@ -27,7 +27,7 @@ public class Account {
     @Column(name = "role", nullable = false)
     private AccountRole role;
 
-    // stato dell'iscrizione salvato come testo (PENDING / APPROVED)
+    // stato dell'iscrizione salvato come testo (PENDING / APPROVED / REJECTED)
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private AccountStatus status;

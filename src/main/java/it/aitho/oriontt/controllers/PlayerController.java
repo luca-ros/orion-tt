@@ -1,12 +1,16 @@
 package it.aitho.oriontt.controllers;
 
-import it.aitho.oriontt.dto.*;
+import it.aitho.oriontt.dto.EmailUpdateDTO;
+import it.aitho.oriontt.dto.MatchSummaryDTO;
+import it.aitho.oriontt.dto.PlayerDTO;
+import it.aitho.oriontt.dto.PlayerProfileDTO;
 import it.aitho.oriontt.entities.Player;
 import it.aitho.oriontt.services.PlayerService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 // List: viene da Java (java.util), non da Spring
 @CrossOrigin(origins = "http://localhost:5173")   // autorizza le chiamate dal frontend React
 @RestController
